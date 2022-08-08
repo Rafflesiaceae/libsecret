@@ -2,6 +2,8 @@ package libsecret
 
 import "github.com/godbus/dbus"
 
+var PrimaryKeyAttribute string = "profile"
+
 type Collection struct {
 	conn *dbus.Conn
 	dbus dbus.BusObject
@@ -55,9 +57,9 @@ func (collection *Collection) Delete() error {
 }
 
 // SearchItems (IN Dict<String,String> attributes, OUT Array<ObjectPath> results);
-func (collection *Collection) SearchItems(profile string) ([]Item, error) {
+func (collection *Collection) SearchItems(primaryKey string) ([]Item, error) {
 	attributes := make(map[string]string)
-	attributes["profile"] = profile
+	attributes[PrimaryKeyAttribute] = primaryKey
 
 	var paths []dbus.ObjectPath
 
@@ -79,7 +81,7 @@ func (collection *Collection) CreateItem(label string, secret *Secret, replace b
 	properties := make(map[string]dbus.Variant)
 	attributes := make(map[string]string)
 
-	attributes["profile"] = label
+	attributes[PrimaryKeyAttribute] = label
 	properties["org.freedesktop.Secret.Item.Label"] = dbus.MakeVariant(label)
 	properties["org.freedesktop.Secret.Item.Attributes"] = dbus.MakeVariant(attributes)
 
